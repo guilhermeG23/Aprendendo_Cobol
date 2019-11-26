@@ -1,7 +1,7 @@
       *EXPLICANDO AREAS DE TRABALHO
        IDENTIFICATION DIVISION.
       *DOCUMENTACAO SOBRE O PROGRAMA
-       PROGRAM-ID. EXEMPLO26.
+       PROGRAM-ID. EXEMPLO32.
        AUTHOR. GUILHERME.
        ENVIRONMENT DIVISION.
       *I/O PERIFERICOS
@@ -10,24 +10,14 @@
        FILE SECTION.
        WORKING-STORAGE SECTION.
       *AREA DE VARIAVEIS
+       77 WRK-A PIC 9(02) VALUE ZEROS.
        PROCEDURE DIVISION.
       *PROGRAMA EM SI, AREA DE PROCESSAMENTO
       *VARIAVEIS VALIDAS E NAO VALIDAS  
        0001-PRINCIPAL.
-           DISPLAY '----------------------'
-           DISPLAY '''TYPES PRINTS'''.
-           DISPLAY '----------------------'
-           DISPLAY 'TESTE VALIDO'
-           DISPLAY 100.
-           DISPLAY +100.
-           DISPLAY +100.9.
-           DISPLAY -100.9.
-           DISPLAY '----------------------'
-           DISPLAY 'TESTE INVALIDO™'.
-           DISPLAY '1,0'.
-           DISPLAY '10.'.
-           DISPLAY '10,9-'.
-           DISPLAY '----------------------'
+      *FAZENDO OPERACAO DE COMPUTACAO
+           COMPUTE WRK-A = (10 + 20)/2.
+           DISPLAY WRK-A.
            STOP RUN.
       *EXECUTANDO A CHAMADA
        0001-PRINCIPAL.
