@@ -9,11 +9,11 @@
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
       *SELECIONAR ARQUIVOS E FORMA DE ACESSA-LO
-           SELECT CLIENTES ASSIGN TO 'CLIENTES.DAT'
+           SELECT CLIENTES ASSIGN TO 'CLIENTE.DAT'
                ORGANIZATION IS INDEXED
-               ACCESS MODE IS RANDOM
-               FILE STATUS IS CLIENTES-STATUS
-               RECORD KEY IS CLIENTES-CHAVE.
+               ACCESS MODE IS SEQUENTIAL
+               RECORD KEY IS CLIENTES-CHAVE
+               FILE STATUS IS CLIENTES-STATUS.
 
        DATA DIVISION.
 
@@ -89,8 +89,14 @@
 
        01 MOSTRA-ERRO.
            02 MSG-ERRO.
-               10 LINE 16 COLUMN 10 PIC X(40) USING WRK-MSG-ERRO.
-               10 LINE 16 COLUMN PLUS 2 PIC X(01) USING WRK-TECLA.
+               10 LINE 16 COLUMN 01 ERASE EOL
+                           BACKGROUND-COLOR 3.
+               10 LINE 16 COLUMN 10 PIC X(30)
+                           FOREGROUND-COLOR 0
+                           BACKGROUND-COLOR 3
+                           FROM WRK-MSG-ERRO.
+               10 COLUMN PLUS 2 PIC X(01)
+                           USING WRK-TECLA.
 
       *AREA DE PROCESSAMENTO
        PROCEDURE DIVISION.
@@ -100,8 +106,9 @@
        0000-PRINCIPAL SECTION.
 
       *CARREGAR PERFORME
-           PERFORM 1000-INICIAR.
-           PERFORM 2000-PROCESSAR.
+           PERFORM 1000-INICIAR THRU 1100-MONTATELA.
+      *ATE QUE RECEBA X PARA SAIR DESSE PROCESSAMENTO
+           PERFORM 2000-PROCESSAR UNTIL WRK-OPCAO = 'X'.
            PERFORM 3000-FINALIZAR.
       *PARA PROCESSO
            STOP RUN.
@@ -124,26 +131,37 @@
       *    DISPLAY MENU.
            ACCEPT MENU.
 
+       1100-MONTATELA.
+           DISPLAY TELA.
+           ACCEPT MENU.
+
+
        2000-PROCESSAR.
+      *ZERANDO A MENSAGEM DE ERROR
+           MOVE SPACES TO WRK-MSG-ERRO
+           MOVE SPACES TO CLIENTES-NOME
+           MOVE SPACES TO CLIENTES-EMAIL
+           MOVE SPACES TO CLIENTES-CHAVE
       *LIMPAR O VALOR DA OPCAO
            EVALUATE WRK-OPCAO
       *OPCOES
                WHEN 1
                    PERFORM 5000-INCLUIR
                WHEN 2
-                   CONTINUE
+                   PERFORM 6000-CONSULTAR
                WHEN 3
-                   CONTINUE
+                   PERFORM 7000-ALTERAR
                WHEN 4
-                   CONTINUE
+                   PERFORM 8000-EXCLUSAO
                WHEN 5
-                   CONTINUE
+                   PERFORM 9000-RELATORIOTELA
                WHEN OTHER
       *QUALQUER COISA ALEM DE X É ERRO
                    IF WRK-OPCAO NOT EQUAL 'X'
                        DISPLAY 'ENTRE COM UMA OPCAO VALIDA'
                    END-IF
            END-EVALUATE.
+               PERFORM 1100-MONTATELA.
 
       *POSICIONAMENTO EM LINHA E COLUNA COM AT 16 LINHA 10 COLUNA
       *RETIRADO POR FALTA DE UTILIZANDO
@@ -167,7 +185,88 @@
                            MOVE 'JA EXISTE A CHAVE' TO WRK-MSG-ERRO
                            ACCEPT MOSTRA-ERRO
                    END-WRITE.
-               DISPLAY TELA.
-               ACCEPT MENU.
 
-       END PROGRAM CLIENTES.
+       6000-CONSULTAR.
+           MOVE 'MODULO - CONSULTA' TO WRK-MODULO.
+           DISPLAY TELA.
+               DISPLAY TELA-REGISTRO.
+               ACCEPT CHAVE.
+                   READ CLIENTES
+                       INVALID KEY
+                           MOVE 'NAO ENCOTRADO' TO WRK-MSG-ERRO
+                       NOT INVALID KEY
+                           MOVE '-- ENCONTRADO --' TO WRK-MSG-ERRO
+                           DISPLAY SS-DADOS
+                    END-READ.
+                        ACCEPT MOSTRA-ERRO.
+
+      *ALTERACAO
+       7000-ALTERAR.
+           MOVE 'MODULO - ALTERAR' TO WRK-MODULO.
+           DISPLAY TELA.
+               DISPLAY TELA-REGISTRO.
+               ACCEPT CHAVE.
+                   READ CLIENTES
+                       IF CLIENTES-STATUS = 0
+                           ACCEPT SS-DADOS
+      *REESCREVER POR CIMA OS DADOS PELA CHAVE DO USUARIO
+                               REWRITE CLIENTES-REG
+                               IF CLIENTES-STATUS = 0
+                                   MOVE 'REGISTRO ALTERADO' TO
+                                                  WRK-MSG-ERRO
+                                   ACCEPT MOSTRA-ERRO
+                               ELSE
+                                   MOVE 'REGISTRO NAO ALTERADO' TO
+                                                  WRK-MSG-ERRO
+                                   ACCEPT MOSTRA-ERRO
+                               END-IF
+                       ELSE
+                           MOVE 'REGISTRO NAO ENCONTRADO' TO
+                                                  WRK-MSG-ERRO
+                           ACCEPT MOSTRA-ERRO
+                       END-IF.
+
+
+      *DELETANDO A CHAVE DO CLIENTE
+       8000-EXCLUSAO.
+           MOVE 'MODULO - EXCLUSAO' TO WRK-MODULO.
+           DISPLAY TELA.
+               DISPLAY TELA-REGISTRO.
+               ACCEPT CHAVE.
+                   READ CLIENTES
+                       INVALID KEY
+                           MOVE 'NAO ENCOTRADO' TO WRK-MSG-ERRO
+                       NOT INVALID KEY
+                           MOVE 'DESEJA EXCLUIR(S-N)' TO WRK-MSG-ERRO
+                           DISPLAY SS-DADOS
+                    END-READ.
+                        ACCEPT MOSTRA-ERRO.
+      *ESTE IF É O SUFICIENTE PARA ATIVAR O DELETE DO CLIENTE
+                        IF WRK-TECLA = 'S' AND CLIENTES-STATUS = 0
+                               DELETE CLIENTES
+                               INVALID KEY
+                                   MOVE 'NAO ESCLUIDO' TO WRK-MSG-ERRO
+                                   ACCEPT MOSTRA-ERRO
+                               END-DELETE
+                         END-IF.
+
+       9000-RELATORIOTELA.
+           MOVE 'MODULO - RELATORIO' TO WRK-MODULO.
+           DISPLAY TELA.
+           MOVE 123456789 TO CLIENTES-FONE.
+           START CLIENTES KEY EQUAL CLIENTES-FONE.
+           READ CLIENTES
+               INVALID KEY
+                   MOVE 'NENHUM REGISTRO ENCONTRADO' TO WRK-MSG-ERRO
+               NOT INVALID KEY
+                   DISPLAY '------------------'
+                   DISPLAY 'RELATORIO CLIENTES'
+                   DISPLAY '------------------'
+                   PERFORM UNTIL CLIENTES-STATUS = 10
+                       DISPLAY CLIENTES-FONE ' '
+                               CLIENTES-NOME ' '
+                               CLIENTES-EMAIL
+                       READ CLIENTES NEXT
+                   END-PERFORM
+               END-READ.
+                   ACCEPT MOSTRA-ERRO.

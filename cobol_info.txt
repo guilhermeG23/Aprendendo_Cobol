@@ -1,10 +1,22 @@
 COBOL -> Commom business oriented language
 
+--------------------------------------------------------------
+
+CRUD -> Uso basico do banco -> Criar, editar, selecionar e deletar
+
+--------------------------------------------------------------
+
 Aplicações -> mainframes(grandes empresas) ou open(GNU Linux)
+
+--------------------------------------------------------------
 
 Linguagem compilada -> linguagem JCL -> Compila cobol
 
+--------------------------------------------------------------
+
 #Estrutura do cobol -> Imagem está no diretorio atual
+
+--------------------------------------------------------------
 
 #Regras das colunas -> Divisões
 * Se deu origem pelo fato que o cobol era cartão perfurado
@@ -15,27 +27,35 @@ Coluna 8 a 11 -> Divisões, seções, paragrafos, declaração de variaveis
 Coluna 12 a 72 -> Comandos
 Coluna 73 a 80 -> Numeração internal do cobol -> Não mexer
 
+--------------------------------------------------------------
+
 #inicião na coluna 8
 Identification division -> Nome do programa
 Environment division -> Ambiente
 Data division -> Divisão dos dados
 Procedure division -> Estrutura dos dados
 
+--------------------------------------------------------------
+
 Grace Hopper -> Mãe do cobol
 
+--------------------------------------------------------------
+
 Cobol só trabalha com texto ou número
+
+--------------------------------------------------------------
 
 Váriaveis tem níveis
 77 -> Unica e global
 
----------------------------------
-*77 -> MODELO DE VARIAVEL GLOBAL, LOCAL, UNICA
-*WRK-NOME -> NOME DA VARIAVEL
-*PICTURE -> DEFINE O FUNCAO, PODE SER ESCRITA COMO PIC
-*A -> ALFABETICA, X -> ALFANUMERICO, 9 -> SOMENTE NUMERICO
-*XXX -> VARIAVEL DE 3 CARACTERES DE TAMANHO OU X(3)
-*PODE JA SETAR UM PRE VALOR USANDO VALUE COM O CONTEUDO
----------------------------------
+	*	77 -> MODELO DE VARIAVEL GLOBAL, LOCAL, UNICA
+	*	WRK-NOME -> NOME DA VARIAVEL
+	*	PICTURE -> DEFINE O FUNCAO, PODE SER ESCRITA COMO PIC
+	*	A -> ALFABETICA, X -> ALFANUMERICO, 9 -> SOMENTE NUMERICO
+	*	XXX -> VARIAVEL DE 3 CARACTERES DE TAMANHO OU X(3)
+	*	PODE JA SETAR UM PRE VALOR USANDO VALUE COM O CONTEUDO
+
+--------------------------------------------------------------
      
 #Nivel de grupo 
 Nível 01 é o menor nível aceito pelo Cobol. Quando for utilizado como variável de grupo, 
@@ -43,21 +63,33 @@ deverá conter abaixo outras variáveis começando pelo nível 02 até 49 .
 Se a variável for iniciada com nível 01 e não contiver outras variáveis , 
 torna-se variável simples de um elemento.
 
+--------------------------------------------------------------
+
 #Estrutura de if
 -> Dentro do IF não use ponto final nas linhas, somente no fim do if
 
+--------------------------------------------------------------
+
 #Paragrafo -> Conceito de areas
+
+--------------------------------------------------------------
 
 #diferença entre go to e performe
 
 go to -> Vai ate a linha e executa, mas fica la
 perfome executa e retorna do ponto que mandou
 
+--------------------------------------------------------------
+
 #gasta mais em performaçe se fazer na procedure do que já deixar em memória na working storage
+
+--------------------------------------------------------------
 
 #As formas mais comuns de leitura do cobol é seguencial ou randomica
 Sequencial -> Registro por registro
 Randomico -> Por ponteiro 
+
+--------------------------------------------------------------
 
 #Arquivos 
 Sequencial e acesso direto
@@ -67,12 +99,18 @@ Arquivos  -> File -> Estrutura do arquivo é chamado de layout -> Quantidade de 
 	Registros -> Linhas colunas -> Quantidade de registros
 		campos -> Campos -> quantidade de campos e quantos caracteres de tamanho cada campo
 
+--------------------------------------------------------------
+
 São arquivos posicionais
 
 Procura sequencial -> Ler tudo até achar o valor que quer
 Procura direta -> chaveada -> Vai direto ao registro
 
+--------------------------------------------------------------
+
 Status é o valor devolvido pelo cobol após uma procura em um arquivo, sendo que ele achar o valor ou não
+
+--------------------------------------------------------------
 
 #codes de file-status
 
@@ -115,3 +153,67 @@ Código	Descrição
 47	Uma operação READ ou START foi tentada em um arquivo não aberto INPUT ou IO.
 48	Uma operação WRITE foi tentada em um arquivo não aberto no modo OUTPUT, IO ou EXTEND ou em um arquivo aberto IO no modo de acesso seqüencial.
 49	Uma operação DELETE ou REWRITE foi tentada em um arquivo que não é aberto IO.
+
+--------------------------------------------------------------
+
+SECTION -> Execute até encontrar outra section
+
+--------------------------------------------------------------
+
+Tipos de acessos em arquivos que o cobol realiza
+
+sequenciais -> Seque uma sequencia
+	-> le seguindo uma sequencia, abre le de um a um ate achar o que qué
+	
+diretos -> vai pela chave da informacao
+	-> procura pela chave e mostra
+
+Nos arquivos tem que se respeitar o posicionamento
+
+
+Ex:
+
+arquivos (clientes)
+	registros (2)
+		campos -> Layout do arquivo
+			(
+			Codigo 04 
+			Nome 20
+			Cidade 10
+			UF 02
+			filler 03 -> Ocupar o espaco -> Deixado sobrando para uso futuro
+			)
+
+0001IVAN PETRUCCI       LAPA      SP
+0002GIOVANNI AVILA      BELEM     SP
+--------------------------------------------------------------
+
+IF-ELSE
+É possivel ter até 15 if-else dentro de um estrutura, isso é:
+if
+	if
+		if
+			if 
+
+E assim por diante, então requer cuidado e logica para se monstrar uma estrutura de decisao ja que nao tem o else-if 
+
+--------------------------------------------------------------
+
+#CORES
+
+0	Preto		COB-COLOR-BLACK
+1	Verde		COB-COLOR-GREEN
+2	Azul		COB-COLOR-BLUE
+3	Turquesa	COB-COLOR-CYAN
+4	Vermelho	COB-COLOR-RED
+5	Magenta		COB-COLOR-MAGENTA
+6	Amarelo		COB-COLOR-YELLOW
+7	Branco		COB-COLOR-WHITE
+
+REVERSE-VIDEO -> inverte as cores da linha
+
+--------------------------------------------------------------
+
+#SEGURANCA
+
+SECURE -> Cria uma mascara de * para os caracteres digitados
